@@ -12,13 +12,13 @@ Chatbot-ul poate:
 
 ## Interfata utilizator
 
-![Interfata utilizator](poze_proiect/proiect-licenta-ui-utilizator.png)
-
-Interfata include:
+Interfata cu utilizatorul a proiectului include:
 - Fereastra de chat cu bule de mesaje distincte pentru utilizator si chatbot
 - Optiuni predefinite organizate pe categorii (Admitere, Taxe, Regulamente, etc.)
 - Camp pentru introducerea intrebarilor in limbaj natural
 - Posibilitatea de a solicita asistenta umana
+
+![Interfata utilizator](poze_proiect/proiect-licenta-ui-utilizator.png)
 
 ## Tehnologii utilizate
 
