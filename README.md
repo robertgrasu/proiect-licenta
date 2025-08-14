@@ -1,4 +1,5 @@
 # Aplicatie web de tip chatbot pentru Universitatea "Vasile Alecsandri" din Bacau
+**Demo:** https://chatbot.rgsoft.ro/
 
 ## Descrierea proiectului
 
