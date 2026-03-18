@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionare Utilizatori</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/header.css')}}" />
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .edit-btn {
+            background: #04528b;
+            border: #04528b;
+            color: white;
+        }
+
+        .card {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .2);
+        }
+
+        .modal-header {
+            background-color: #04528b;
+            color: #ffffff;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .btn-primary {
+            background-color: #04528b;
+            border: none;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #033c6b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #04528b;
+        }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #04528b;
+            color: #fff;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f8f9fa;
+        }
+
+        .table-striped tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .header-title {
+            text-align: center;
+            font-size: 2rem;
+
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            border-top: none;
+            justify-content: center;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: 0;
+            font-size: 1.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            text-align: right;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            width: 300px !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter label {
+            font-weight: bold;
+        }
+
+        .pagination .page-link {
+            color: #033c6b;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .form-control-sm {
+            margin-top: 22px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #04528b;
+            color: #ffffff;
+            border-color: #04528b;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            float: none;
+            text-align: center;
+        }
+
+        .pagination {
+            margin-top: 10px;
+            padding: 10px 0;
+
+        }
+
+        .pagination .page-item:not(.active) .page-link:hover {
+            background-color: #e9ecef;
+            color: #04528b;
+            border-color: #dee2e6;
+        }
+
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .password-group {
+            display: none;
+        }
+
+        .mesaj-eroare {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .send-email-group {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark dashboard-header">
+        <a class="navbar-brand" href="#">
+            <img src="https://www.ub.ro/frontend/assets/identity/logo.svg" alt="Admin Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/dashboard"><i class="fas fa-home"></i></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Gestionare Date
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/administrare_date">Adauga date</a></li>
+                        <li><a class="dropdown-item" href="/intrebari_fara_raspuns">Intrebari fara Raspuns</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/administrare_utilizatori">Administrare utilizatori</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/panou_control">Setări chatbot</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin_chat">Suport live</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle logout-btn" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Administrator
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/delogare">Delogare</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="header-title">Gestionare Utilizatori</h1>
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal"
+            data-bs-target="#fereastra-modala-add-utilizatori"><i class="fas fa-user-plus"></i> Adaugă
+            Utilizator</button>
+        <div class="card">
+            <div class="card-body">
+                <table id="tabel_utilizatori" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        {% for utilizator in utilizatori %}
+                        <tr data-user-id="{{ utilizator[0] }}">
+                            <td>{{ utilizator[0] }}</td>
+                            <td>{{ utilizator[1] }}</td>
+                            <td>{{ utilizator[2] }}</td>
+                            <td>{{ utilizator[3] }}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm edit-btn" data-bs-toggle="modal"
+                                    data-bs-target="#modal-editare-utilizatori" data-user-id="{{ utilizator[0] }}"
+                                    data-username="{{ utilizator[1] }}" data-email="{{ utilizator[2] }}"
+                                    data-role="{{ utilizator[3] }}"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-user-id="{{ utilizator[0] }}"><i
+                                        class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="fereastra-modala-add-utilizatori" tabindex="-1"
+        aria-labelledby="eticheta-modal-add-utilizatori" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eticheta-modal-add-utilizatori">Adaugă Utilizator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formular-adaugare-utilizatori">
+                        <div class="mb-3">
+                            <label for="camp-nume-utilizator" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="camp-nume-utilizator" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="camp-adaugare-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="camp-adaugare-email" required>
+                            <div class="mesaj-eroare" id="eroare-email" style="display: none;">Email deja existent</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="camp-adaugare-parola" class="form-label">Parola</label>
+                            <input type="password" class="form-control" id="camp-adaugare-parola" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="camp-confirmare-parola" class="form-label">Confirmă Parola</label>
+                            <input type="password" class="form-control" id="camp-confirmare-parola" required>
+                            <div class="mesaj-eroare" id="eroare-adaugare-parola" style="display: none;">Parolele nu se
+                                potrivesc</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="camp-adaugare-rol-administrativ" class="form-label">Rol</label>
+                            <select class="form-select" id="camp-adaugare-rol-administrativ" required>
+                                <option value="admin">Admin</option>
+                                <option value="operator">Operator</option>
+                            </select>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="checkb-trimitere-email">
+                            <label class="form-check-label" for="checkb-trimitere-email">
+                                Trimite datele utilizatorului prin email
+                            </label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Adaugă Utilizator</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-editare-utilizatori" tabindex="-1" aria-labelledby="editare-modal-utilizatori"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editare-modal-utilizatori">Editează Utilizator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formular-editare-useri">
+                        <input type="hidden" id="editare-user-id">
+                        <div class="mb-3">
+                            <label for="editare-nume-utilizator" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="editare-nume-utilizator" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editare-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editare-email" required>
+                            <div class="mesaj-eroare" id="eroare-editare-mail" style="display: none;">Email deja
+                                existent</div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="checkbox" id="check-activare-schimbare-parola"> <label
+                                for="check-activare-schimbare-parola">Schimbă Parola</label>
+                        </div>
+                        <div class="password-group">
+                            <div class="mb-3">
+                                <label for="editare-parola" class="form-label">Parola</label>
+                                <input type="password" class="form-control" id="editare-parola">
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmare-editare-parola" class="form-label">Confirmă Parola</label>
+                                <input type="password" class="form-control" id="confirmare-editare-parola">
+                                <div class="mesaj-eroare" id="editPasswordError" style="display: none;">Parolele nu se
+                                    potrivesc</div>
+                            </div>
+                            <div class="form-check send-email-group">
+                                <input class="form-check-input" type="checkbox" id="checkb-trimitere-email-edit">
+                                <label class="form-check-label" for="checkb-trimitere-email-edit">
+                                    Trimite datele utilizatorului prin email
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editare-rol-administrativ" class="form-label">Rol</label>
+                            <select class="form-select" id="editare-rol-administrativ" required>
+                                <option value="admin">Admin</option>
+                                <option value="operator">Operator</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Actualizează Utilizator</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#tabel_utilizatori').DataTable({
+                language: {
+                    search: "Căutare:",
+                    searchPlaceholder: "Caută utilizator...",
+                    lengthMenu: "Afișează _MENU_ înregistrări pe pagină",
+                    info: "Afișate _START_ până la _END_ din _TOTAL_ înregistrări",
+
+                    infoFiltered: "(filtrate din _MAX_ înregistrări totale)",
+                    infoEmpty: "Afișare 0 până la 0 din 0 înregistrări",
+                    emptyTable: "Nu există date disponibile în tabel",
+                    zeroRecords: "Nu au fost găsite înregistrări care să se potrivească",
+                },
+
+            });
+
+
+            $('#formular-adaugare-utilizatori').on('submit', function (e) {
+                e.preventDefault();
+                const nume_utilizator = $('#camp-nume-utilizator').val();
+                const email = $('#camp-adaugare-email').val();
+                const parola = $('#camp-adaugare-parola').val();
+                const confirmare_parola = $('#camp-confirmare-parola').val();
+                const rol_administrativ = $('#camp-adaugare-rol-administrativ').val();
+                const solicitare_trimitere_email = $('#checkb-trimitere-email').is(':checked');
+
+                $('#eroare-email').hide();
+                $('#eroare-adaugare-parola').hide();
+
+                if (parola !== confirmare_parola) {
+                    $('#eroare-adaugare-parola').show();
+                    return;
+                }
+
+                $.ajax({
+                    url: '/adaugare_utilizatori',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ nume_utilizator, email, parola, rol_administrativ, solicitare_trimitere_email }),
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            $('#fereastra-modala-add-utilizatori').modal('hide');
+                            location.reload();
+                        } else if (response.status === 'error' && response.message === 'Email deja existent') {
+                            $('#eroare-email').show();
+                        } else {
+                            alert('Unauthorized');
+                        }
+                    }
+                });
+            });
+
+            $('#userTableBody').on('click', '.edit-btn', function () {
+                const userId = $(this).data('user-id');
+                const username = $(this).data('username');
+                const email = $(this).data('email');
+                const role = $(this).data('role');
+
+                $('#editare-user-id').val(userId);
+                $('#editare-nume-utilizator').val(username);
+                $('#editare-email').val(email);
+                $('#editare-rol-administrativ').val(role);
+                $('#editare-parola').val('');
+                $('#confirmare-editare-parola').val('');
+                $('.password-group').hide();
+                $('.send-email-group').hide();
+                $('#check-activare-schimbare-parola').prop('checked', false);
+                $('#eroare-editare-mail').hide();
+            });
+
+            $('#check-activare-schimbare-parola').on('change', function () {
+                if ($(this).is(':checked')) {
+                    $('.password-group').show();
+                    $('.send-email-group').show();
+                    $('#editare-parola').prop('required', true);
+                    $('#confirmare-editare-parola').prop('required', true);
+                } else {
+                    $('.password-group').hide();
+                    $('.send-email-group').hide();
+                    $('#editare-parola').prop('required', false);
+                    $('#confirmare-editare-parola').prop('required', false);
+                }
+            });
+
+            $('#formular-editare-useri').on('submit', function (e) {
+    e.preventDefault();
+    const userId = $('#editare-user-id').val();
+    const username = $('#editare-nume-utilizator').val();
+    const email = $('#editare-email').val();
+    const parola = $('#editare-parola').val();
+    const confirmare_parola = $('#confirmare-editare-parola').val();
+    const role = $('#editare-rol-administrativ').val();
+    const send_email = $('#checkb-trimitere-email-edit').is(':checked');
+
+    $('#eroare-editare-mail').hide();
+    $('#editPasswordError').hide();
+
+    if ($('#check-activare-schimbare-parola').is(':checked') && parola !== confirmare_parola) {
+        $('#editPasswordError').show();
+        return;
+    }
+
+    const data = { id: userId, username, email, role, solicitare_trimitere_email: send_email };
+    if ($('#check-activare-schimbare-parola').is(':checked')) {
+        data.parola = parola;
+    }
+
+    $.ajax({
+        url: '/actualizare_utilizatori',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            if (response.status === 'success') {
+                $('#modal-editare-utilizatori').modal('hide');
+                location.reload();
+            } else if (response.status === 'error' && response.message === 'Email deja existent') {
+                $('#eroare-editare-mail').show();
+            } else {
+                alert('Unauthorized');
+            }
+        }
+    });
+});
+
+            // Delete User
+            $('#userTableBody').on('click', '.delete-btn', function () {
+                const userId = $(this).data('user-id');
+
+                if (confirm('Ești sigur că vrei să ștergi acest utilizator?')) {
+                    $.ajax({
+                        url: '/stergere_utilizator',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ id: userId }),
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                location.reload();
+                            } else {
+                                alert('Unauthorized');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

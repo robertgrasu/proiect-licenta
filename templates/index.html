@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Aplicatie Chatbot Universitate</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/404b2e8197.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/chat.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/butoane.css')}}" />
+
+    <style>
+        body {
+            -webkit-text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            touch-action: manipulation;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                overflow: hidden;
+            }
+
+            input, textarea, select {
+                font-size: 16px !important;
+            }
+
+            .chat {
+                overflow: hidden;
+            }
+        }
+
+        .category-btn,
+        .question-btn,
+        .btn-success,
+        .btn-secondary {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background-color: #04528b;
+            color: white;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            padding: 6px 14px;
+            margin: 4px 0;
+            font-weight: 500;
+        }
+
+        .category-btn:hover,
+        .question-btn:hover,
+        .btn-success:hover,
+        .btn-secondary:hover {
+            background-color: #023661;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(4, 82, 139, 0.2);
+        }
+
+        .category-btn:active,
+        .question-btn:active,
+        .btn-success:active,
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .follow-up-question {
+            text-align: center;
+            display: block;
+            margin-top: 10px;
+            max-width: 85%;
+        }
+
+        .follow-up-question .btn {
+            margin-top: 5px;
+        }
+
+        .bot_message_container {
+            background-color: #E9ECEF;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #04528b;
+            border-color: #04528b;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #023661;
+            border-color: #023661;
+            transform: translateY(-1px);
+        }
+
+        .btn-light {
+            background-color: #f8f9fa;
+            border-color: #f8f9fa;
+            color: #333;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-light:hover {
+            background-color: #e2e6ea;
+            border-color: #e2e6ea;
+        }
+    </style>
+</head>
+
+<body>
+    <div title="Deschide chat" id="chat-open-button" class="fas fa-comments"></div>
+    <div>
+        <div>
+            <div class="col-md-8 col-xl-6 chat">
+                <div class="card">
+                    <div class="card-header chat-header">
+                        <div class="d-flex bd-highlight">
+                            <div class="img_cont">
+                                <img src="{{ url_for('static', filename='uploads/user_img.png') }}"
+                                    class="rounded-circle user_img" id="chatbot-user-img">
+                                <span class="indicator_online"></span>
+                            </div>
+                            <div class="info-chatbot">
+                                <span>Asistent Virtual</span>
+                                <p>Universitatea "Vasile Alecsandri din Bacău"</p>
+                            </div>
+                        </div>
+                        <button title="Inchide chat" id="buton_minimizare" aria-label="Minimizare"
+                            style="border: none; background: transparent;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" focusable="false"
+                                viewBox="0 0 16 16" data-testid="Icon--dash">
+                                <path stroke="white" stroke-linecap="round" stroke-width="3" d="M3 8h11"></path>
+                            </svg>
+                        </button>
+
+                    </div>
+                    <div id="chat-messages-area" class="card-body msg_card_body">
+
+                    </div>
+
+                    <div id="category-messages-area"></div>
+
+                    <div class="card-footer">
+                        <form id="message-input-area" class="input-group">
+                            <textarea id="question" name="question" placeholder="Scrie un mesaj..." autocomplete="off"
+                                class="form-control type_msg autoExpand" required></textarea>
+                            <div class="input-group-append">
+                                <button title="Trimite mesajul" type="submit" id="send"
+                                    class="input-group-text send_btn"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+    <script src="../static/script_chatbot.js"></script>
+    <script>
+        var chatAdminActive = false;
+
+        // Functie care actualizeaza pozitia de scroll a containerului astfel incat sa se afiseze cel mai recent mesaj din chat
+        // function update_scroll() {
+        //   var chat_container = $("#chat-messages-area");
+        //   chat_container.animate({ scrollTop: chat_container.prop("scrollHeight") }, 1000);
+        // }
+        function update_scroll() {
+            setTimeout(function () {
+                var chat_container = $("#chat-messages-area");
+                chat_container.scrollTop(chat_container.prop("scrollHeight"));
+            }, 50);
+        }
+        //Functie care identifica adresele URL dintr-un text si le transforma in link-uri clicabile
+        function transformare_link(text) {
+            //Se utilizeaza un regex pentru indentificarea URL-urilor
+            var regex_url = /((?<!href=['"])((?:https?:\/\/|www\.)[^\s]+))(?![^<]*>)/g;
+            return text.replace(regex_url, function (url) {
+                var url_http = url;
+                if (!url.match('^https?:\/\/')) {
+                    url_http = 'http://' + url;
+                }
+                return '<a href="' + url_http + '" target="_blank">' + url + '</a>';
+            });
+        }
+
+        //Functie pentru indepartarea focus-ului de la butonul de send dupa ce a fost trimis un mesaj
+        $("#send").on("click", function () {
+            $(this).blur();
+        });
+
+        //Functie care afiseaza o animatie care indica faptul ca botul scrie un raspuns pentru utilizator
+        function animatie_tastare() {
+            var typingHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="/static/uploads/user_img.png" class="rounded-circle user_img_msg" id="chatbot-user-img"></div><div class="bot_message_container"><span class="animatie_typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><span class="msg_time"></span></div></div>';
+            $("#chat-messages-area").append(typingHtml);
+            update_scroll();
+        }
+
+        //Functie care inlatura animatia care indica faptul ca botul scrie un raspuns pentru utilizator
+        function eliminare_animatie_tastare() {
+            $("#chat-messages-area .animatie_typing").closest('.d-flex').remove();
+        }
+
+        function mesaj_bun_venit() {
+            if ($('.chat').data('arata_mesaj_bun_venit')) {
+                return;
+            }
+
+            animatie_tastare();
+
+            setTimeout(() => {
+                fetch('/get_setting?name=mesaj_bun_venit')
+                    .then(response => response.json())
+                    .then(data => {
+                        eliminare_animatie_tastare();
+
+                        const date = new Date();
+                        const hour = ("0" + date.getHours()).slice(-2);
+                        const minute = ("0" + date.getMinutes()).slice(-2);
+                        const str_time = hour + ":" + minute;
+
+                        let welcomeMessage = data.success ? data.value : "Bună ziua! Cu ce te pot ajuta astăzi?";
+
+                        var mesaj_intampinare = `<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="/static/uploads/user_img.png" class="rounded-circle user_img_msg" id="chatbot-user-img"></div><div class="bot_message_container">${welcomeMessage}<span class="msg_time">${str_time}</span></div></div>`;
+                        $("#chat-messages-area").append($.parseHTML(mesaj_intampinare));
+                        update_scroll();
+
+                        setTimeout(() => {
+                            animatie_tastare();
+                            setTimeout(() => {
+                                eliminare_animatie_tastare();
+                                afisare_categorii();
+                            }, 500);
+                        }, 500);
+                    });
+
+                $('.chat').data('arata_mesaj_bun_venit', true);
+            }, 500);
+        }
+
+
+
+        // Event handler pentru cand pagina este incarcata si gestioneaza evenimente precum
+        // afisarea sau ascunderea chat-ului cand este apasat butonul
+        $(document).ready(function () {
+
+            $("#chat-open-button").click(function () {
+                $(".chat").show();
+                $(this).hide();
+                // se afiseaza mesaj de bun venit cand este deschis chat-ul
+                mesaj_bun_venit();
+            });
+
+            $("#buton_minimizare").click(function () {
+                $(".chat").hide();
+                $("#chat-open-button").show();
+            });
+
+            // Când tasta Enter este apasata in timp ce se scrie in inputul "question" (fara a adauga o linie noua in zona de introducere
+            // a textului) atunci se va trimite mesajul utilizatorului
+            $("#question").on("keydown", function (e) {
+                if (e.keyCode == 13 && !e.shiftKey) {
+                    e.preventDefault();
+                    $("#message-input-area").submit();
+                }
+            });
+        });
+
+
+        $("#message-input-area").on("submit", function (event) {
+            event.preventDefault();
+            const date = new Date();
+            const hour = ("0" + date.getHours()).slice(-2);
+            const minute = ("0" + date.getMinutes()).slice(-2);
+            const str_time = hour + ":" + minute;
+            var raw_text = $("#question").val();
+
+            if (!raw_text.trim()) {
+                return;
+            }
+
+            raw_text = $("<div>").text(raw_text).html();
+
+            var mesaj_user = '<div class="d-flex justify-content-end mb-4"><div class="user_message_container">' + raw_text + '<span class="msg_time_send">' + str_time + '</span></div></div>';
+
+            $("#question").val("");
+            $("#chat-messages-area").append(mesaj_user);
+            update_scroll();
+
+            if (!chatAdminActive) {
+                animatie_tastare();
+            }
+
+            $.ajax({
+                data: {
+                    question: raw_text,
+                },
+                type: "POST",
+                url: "/chat",
+
+            }).done(function (data) {
+                setTimeout(function () {
+                    eliminare_animatie_tastare();
+                    var raspuns = transformare_link(data.raspuns);
+                    var mesaj_bot = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="/static/uploads/user_img.png" class="rounded-circle user_img_msg" id="chatbot-user-img"></div><div class="bot_message_container">' + raspuns + '<span class="msg_time">' + str_time + '</span></div></div>';
+                    $("#chat-messages-area").append(mesaj_bot);
+                    update_scroll();
+
+                    if (data.arata_optiune_chat_live) {
+                        animatie_tastare();
+                        setTimeout(function () {
+                            eliminare_animatie_tastare();
+                            var opt_admin = '<div>Chatbot-ul nu a înțeles întrebarea ta. Dorești să soliciți o sesiune cu un admin?</div>' +
+                                '<button class="btn btn-success btn-block m-1" onclick="solicitare_interv_adm()">Da</button>' +
+                                '<button class="btn btn-secondary btn-block m-1" onclick="incheiere_conv()">Nu</button>';
+                            mesaj_chatbot(opt_admin);
+                        }, 800);
+                    }
+                }, 800);
+            });
+        });
+
+        function solicitare_interv_adm() {
+            mesaj_user("solicitare interventie admin");
+            animatie_tastare();
+            $.ajax({
+                data: { question: "solicitare interventie admin" },
+                type: "POST",
+                url: "/chat"
+            }).done(function (data) {
+                eliminare_animatie_tastare();
+                mesaj_chatbot(transformare_link(data.raspuns));
+            });
+        }
+        const text_area = document.getElementById('question');
+        text_area.addEventListener('input', auto_expand);
+
+        //Functie care redimensioneaza automat inaltimea campului de text in functie de continutul mesajului pe care il scrie user-ul curent
+        function auto_expand() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        }
+        var socket = io('/');
+        socket.on('admin_chat_active', function (data) {
+            chatAdminActive = true;
+
+            eliminare_animatie_tastare();  
+            functie_stergere_msj_asteptare_adm();  
+
+            console.log("Chat-ul de admin este activ pentru sesiunea: ", data.id_sesiune_utilizatori);
+        });
+        function functie_stergere_msj_asteptare_adm() {
+            var awaitingMessage = $("#awaiting-admin-message").closest('.d-flex');
+            if (awaitingMessage.length) {
+                awaitingMessage.remove();
+            }
+        }
+
+
+        socket.on('mesaj_de_la_admin', function (data) {
+            functie_stergere_msj_asteptare_adm()
+            mesaj_chatbot(data.data);
+        });
+
+
+
+        socket.on('session_closed', function (data) {
+            mesaj_chatbot('Aceasta sectiune a fost inchisa de un admin.');
+            animatie_tastare();
+            setTimeout(function () {
+                eliminare_animatie_tastare();
+                var info_suplimentar = '<div>Te mai putem ajuta cu alte informații?</div>' +
+                    '<button class="btn btn-success btn-block m-1" onclick="handler_rsp_yes()">Da</button>' +
+                    '<button class="btn btn-secondary btn-block m-1" onclick="incheiere_conv()">Nu</button>';
+                mesaj_chatbot(info_suplimentar);
+            }, 1700);
+        });
+
+
+        $("#message-input-area").on("submit", function (event) {
+            event.preventDefault();
+            var mesaj = $("#question").val().trim();
+            if (!mesaj) {
+                return;
+            }
+            afiseaza_mesaj(mesaj, 'user');
+            $("#question").val('');
+
+            $.ajax({
+                type: "POST",
+                url: "/chat",
+                data: { intrebare: message },
+                success: function (data) {
+                    afiseaza_mesaj(data.raspuns, 'chatbot');
+                }
+            });
+        });
+
+        function afiseaza_mesaj(message, sender) {
+            var alignClass = sender === 'admin' ? 'start' : 'end';
+            var messageHtml = '<div class="d-flex justify-content-' + alignClass + ' mb-4">' +
+                '<div class="' + sender + '_message_container">' + message +
+                '<span class="msg_time">' + new Date().toLocaleTimeString() + '</span></div></div>';
+            $("#chat-messages-area").append(messageHtml);
+        }
+
+
+
+        function mesaj_chatbot(message) {
+            var time = new Date().toLocaleTimeString();
+            var messageHtml = `<div class="d-flex justify-content-start mb-4 chatbot-message">
+        <div class="img_cont_msg">
+            <img src="/static/uploads/user_img.png" class="rounded-circle user_img_msg" id="chatbot-user-img"></div>
+        <div class="bot_message_container">${message}<span class="msg_time">${time}</span></div></div>`;
+            $("#chat-messages-area").append(messageHtml);
+            update_scroll();
+        }
+
+        function mesaj_user(message) {
+            var time = new Date().toLocaleTimeString();
+            var userMessageHtml = '<div class="d-flex justify-content-end mb-4">' +
+                '<div class="user_message_container">' + message +
+                '<span class="msg_time_send">' + time + '</span></div></div>';
+            $("#chat-messages-area").append(userMessageHtml);
+            update_scroll();
+        }
+        function preluare_categorii_intrebari() {
+            $.ajax({
+                url: '/get_categories',
+                type: 'GET',
+                success: function (data) {
+                    categories = data;
+                    // afisare_categorii();
+                },
+                error: function (error) {
+                    console.error("Error fetching categories and questions: ", error);
+                }
+            });
+        }
+
+
+        function afisare_categorii() {
+            var categoriesHtml = '<div>Cu ce te pot ajuta? Poți alege unul din subiectele de mai jos, daca întrebarea ta are legătura cu una din aceste categorii sau adresează-mi o nouă întrebare.</div>';
+            categories.forEach(function (category) {
+                categoriesHtml += '<button class="btn btn-primary m-1 category-btn" onclick="selectare_categorie(\'' + category.name + '\')">' + category.name + '</button>';
+            });
+
+            mesaj_chatbot(categoriesHtml);
+        }
+
+        function selectare_categorie(categoryName) {
+            $(".chatbot-message").last().remove();
+            mesaj_user(categoryName);
+            var category = categories.find(cat => cat.name === categoryName);
+            var questionsHtml = 'Alege una dintre opțiuni:';
+            category.questions.forEach(function (question) {
+                questionsHtml += '<button class="btn btn-primary m-1 question-btn" onclick="selectare_intrebari_predefinite(\'' + question + '\')">' + question + '</button>';
+            });
+            animatie_tastare();
+            setTimeout(() => {
+                eliminare_animatie_tastare();
+                mesaj_chatbot(questionsHtml);
+            }, 800);
+        }
+
+        function selectare_intrebari_predefinite(question) {
+            $(".chatbot-message").last().remove();
+            mesaj_user(question);
+            animatie_tastare();
+
+            $.ajax({
+                data: { question: question },
+                type: "POST",
+                url: "/chat"
+            }).done(function (data) {
+                setTimeout(() => {
+                    eliminare_animatie_tastare();
+                    mesaj_chatbot(transformare_link(data.raspuns));
+
+                    if (question.toLowerCase() === 'solicitare interventie admin' && data.raspuns.includes('Așteptați un admin')) {
+                        animatie_tastare(); 
+
+                        setTimeout(function () {
+                            eliminare_animatie_tastare();
+
+                            var awaitingAdminHtml = '<div id="awaiting-admin-message">Doriți să anulați solicitarea de chat?.<br>' +
+                                '<button class="btn btn-secondary btn-block m-1" onclick="anulare_cerere_admin()">Anulează solicitarea</button></div>';
+                            mesaj_chatbot(awaitingAdminHtml);
+
+                        }, 60000);
+                    } else if (!chatAdminActive) {
+                        setTimeout(function () {
+                            animatie_tastare();
+                            setTimeout(function () {
+                                eliminare_animatie_tastare();
+                                var info_suplimentar = '<div>Te mai putem ajuta cu alte informații?</div>' +
+                                    '<button class="btn btn-success btn-block m-1" onclick="handler_rsp_yes()">Da</button>' +
+                                    '<button class="btn btn-secondary btn-block m-1" onclick="incheiere_conv()">Nu</button>';
+                                mesaj_chatbot(info_suplimentar);
+                            }, 500);
+                        }, 1000);
+                    }
+                }, 500);
+            });
+        }
+
+        function anulare_cerere_admin() {
+            mesaj_user("anulare interventie admin");
+            animatie_tastare();
+            $.ajax({
+                data: { question: "anulare interventie admin" },
+                type: "POST",
+                url: "/chat"
+            }).done(function (data) {
+                functie_stergere_msj_asteptare_adm();
+
+                setTimeout(function () {
+                    eliminare_animatie_tastare();
+                    mesaj_chatbot(transformare_link(data.raspuns));
+                    chatAdminActive = false;
+
+                    animatie_tastare();
+                    setTimeout(function () {
+                        eliminare_animatie_tastare();
+                        afisare_categorii();
+                    }, 1700);
+                }, 500);
+            });
+        }
+
+        function handler_rsp_yes() {
+            mesaj_user("Da");
+            $(".chatbot-message").last().remove();
+            animatie_tastare();
+            setTimeout(function () {
+                eliminare_animatie_tastare();
+                afisare_categorii();
+            }, 500);
+        }
+
+
+        function incheiere_conv() {
+            $(".btn-success, .btn-secondary").remove();
+            fetch('/get_setting?name=final_message')
+                .then(response => response.json())
+                .then(data => {
+                    let goodbyeMessage = data.success ? data.value : "Mulțumim că ai utilizat chatbotul nostru. O zi bună!";
+                    mesaj_user('Nu');
+                    mesaj_chatbot(goodbyeMessage);
+                });
+            $(".chatbot-message").last().remove();
+        }
+
+        $(document).ready(function () {
+            // var cacheBust = new Date().getTime();
+            // $('#chatbot-user-img').attr('src', function() {
+            //     return $(this).attr('src') + '?' + cacheBust;
+            // });
+            // var cacheBust = new Date().getTime();
+            $('#chatbot-user-img').attr('src', function () {
+                return $(this).attr('src');
+            });
+            preluare_categorii_intrebari();
+        });
+
+
+    </script>
+
+</body>
+
+</html>

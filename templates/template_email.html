@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #04528b;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header img {
+            width: 50px;
+            height: auto;
+            margin-right: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .content {
+            padding: 20px;
+            text-align: left;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            color: #333333;
+            text-align: center;
+            padding: 10px;
+            border-radius: 0 0 10px 10px;
+        }
+        .strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://www.ub.ro/frontend/assets/identity/logo.svg?ver=0.1" alt="Logo" style="margin-left: -80px;">
+            <h1 style="margin-left: 48px;">Date logare aplicație chatbot</h1>
+        </div>
+        <div class="content">
+            <p>Stimate {{ username }},</p>
+            <p>Contul dumneavoastră a fost creat/actualizat cu succes.</p>
+            <p><span class="strong">Username:</span> {{ nume_utilizator }}</p>
+            <p><span class="strong">Email:</span> {{ email }}</p>
+            <p><span class="strong">Rol:</span> {{ rol_administrativ }}</p>
+            {% if parola %}
+            <p><span class="strong">Parola:</span> {{ parola }}</p>
+            {% endif %}
+            <p>Dacă aveți întrebări, nu ezitați să contactați echipa noastră de suport.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; Universitatea "Vasile Alecsandri" din Bacău.</p>
+        </div>
+    </div>
+</body>
+</html>

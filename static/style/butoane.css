@@ -1,0 +1,51 @@
+#chat-open-button {
+  position: fixed;
+  bottom: 40px;
+  right: 30px;
+  background: #04528b;
+  color: white;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 66px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 16px rgba(4, 82, 139, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#chat-open-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(4, 82, 139, 0.4);
+}
+
+#buton_minimizare {
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+#buton_minimizare:hover {
+  background: rgba(1, 16, 67, 0.7) !important;
+}
+
+.send_btn {
+	background-color: transparent !important;
+	border: 0 !important;
+	color: white !important;
+	cursor: pointer;
+}
+
+.send_btn:hover {
+	background: rgba(1, 16, 67, 0.9) !important;
+}
+
+.send_btn .fa-solid.fa-paper-plane {
+    font-size: 20px !important;
+}
+
