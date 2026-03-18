@@ -19,31 +19,20 @@ Interfata cu utilizatorul a proiectului include:
 - Camp pentru introducerea intrebarilor in limbaj natural
 - Posibilitatea de a solicita asistenta umana
 
-![Interfata utilizator](poze_proiect/proiect-licenta-ui-utilizator.png)
+![Interfata utilizator](poze_proiect/chat_ui.png)
 
 ## Tehnologii utilizate
 
-### Backend
-- Python
-- Flask
-- TensorFlow/Keras
-- SpaCy
-- PyMySQL
-- Websockets
-
-### Frontend
-- HTML/CSS
-- JavaScript
-- Bootstrap
-- AJAX
+- **Backend:** Python, Flask, TensorFlow/Keras, SpaCy, PyMySQL, WebSockets
+- **Frontend:** HTML/CSS, JavaScript, Bootstrap, AJAX
 
 ## Fluxul de functionare al aplicatiei
 
 Aplicatia functioneaza in patru etape principale:
-1. **Initializarea sistemului**: Serverul Flask porneste si se conecteaza la baza de date MySQL pentru a incarca datele necesare.
-2. **Preprocesarea datelor**: Textele din baza de date sunt curatate si standardizate (eliminarea diacriticelor, lematizare, tokenizare).
-3. **Antrenarea modelului**: Reteaua neuronala LSTM este antrenata pentru a recunoaste intentiile utilizatorilor.
-4. **Procesarea interactiunii**: Sistemul gestioneaza comunicarea cu utilizatorul, procesand intrebarile si generand raspunsuri adecvate sau conectand utilizatorul cu un operator cand este necesar.
+1. **Initializarea sistemului** — serverul Flask porneste si se conecteaza la baza de date MySQL pentru a incarca datele necesare
+2. **Preprocesarea datelor** — textele din baza de date sunt curatate si standardizate (eliminarea diacriticelor, lematizare, tokenizare)
+3. **Antrenarea modelului** — reteaua neuronala LSTM este antrenata pentru a recunoaste intentiile utilizatorilor
+4. **Procesarea interactiunii** — sistemul gestioneaza comunicarea cu utilizatorul, procesand intrebarile si generand raspunsuri adecvate sau conectand utilizatorul cu un operator cand este necesar
 
 ![Diagrama sistemului](poze_proiect/diagrama-uml.png)
 
@@ -58,7 +47,7 @@ def preprocesare_date(self):
     # Procesarea intrebarilor pentru antrenare
     for intent in self.data['categorii_intentii']:
         for pattern in intent['set_intrebari']:
-            # Lematizare - reducerea cuvintelor la forma de baza
+            # Aplicarea etapei de lematizare pt reducerea cuvintelor la forma de baza
             doc = nlp(pattern.lower())
             text_tokenizat = [token.lemma_ for token in doc 
                              if not token.is_stop and not token.is_punct]
@@ -80,11 +69,10 @@ def antrenare_model(self):
         
         # LSTM bidirectional - citeste textul in ambele directii
         Bidirectional(LSTM(128, return_sequences=True)),
-        Dropout(0.5),  # Previne memorarea exacta a exemplelor
+        Dropout(0.5),  # Stratul de dropout pt a preveni memorarea exacta a exemplelor de antrenament
         
         LSTM(64, return_sequences=True),
         Dropout(0.5),
-        
         LSTM(32),
         
         # Straturi pentru clasificarea finala in categorii de intentii
@@ -130,7 +118,7 @@ def distanta_damerau_levenshtein(sir1, sir2):
                 cost = 0
             else:  # Caractere diferite - necesita substitutie
                 cost = 1
-                
+
             distanta[i][j] = min(
                 distanta[i-1][j] + 1,        # Insertie
                 distanta[i][j-1] + 1,        # Stergere
@@ -144,7 +132,7 @@ def distanta_damerau_levenshtein(sir1, sir2):
 
 ### Suport live pentru utilizatori
 
-Sistemul implementeaza un mecanism inteligent de redirectare catre operatori umani atunci cand chatbot-ul nu poate raspunde satisfacator. Functia de chat monitorizeaza numarul de intrebari consecutive neinteleasa si, cand acesta depaseste pragul de 3, ofera utilizatorului optiunea de a solicita asistenta live. Acest sistem asigura ca nicio intrebare nu ramane fara raspuns.
+Sistemul redirecteaza catre operatori umani cand chatbot-ul nu poate raspunde satisfacator. Dupa 3 intrebari consecutive neintelese, utilizatorul primeste optiunea de asistenta live. Comunicarea in timp real este implementata prin WebSocket, cu camere virtuale pentru fiecare sesiune.
 
 ```python
 # Daca utilizatorul introduce 3 intrebari care nu sunt intelese
@@ -153,16 +141,6 @@ if sesiune_browser_useri[id_sesiune_utilizatori]['contor_intrebari_nerecunoscute
     return jsonify({'raspuns': response, 'arata_optiune_chat_live': True})
 ```
 
-Comunicarea in timp real intre utilizatori si operatori este implementata folosind Socket.IO, care permite schimbul instantaneu de mesaje. Sistemul creaza camere virtuale pentru fiecare sesiune de utilizator si permite operatorilor sa monitorizeze si sa raspunda la toate conversatiile active.
-
-```python
-# Conexiunea dintre utilizator si operator
-@socketio.on('mesaj_de_la_admin', namespace='/admin')
-def eveniment_msg_admin(data):
-    # Trimite mesajul operatorului catre utilizator
-    emit('mesaj_de_la_admin', {'data': message}, 
-         namespace='/', room=id_sesiune_utilizatori)
-```
 
 ## Interfata de administrare
 
@@ -178,3 +156,23 @@ Administratorii pot:
 Panoul de administrare permite personalizarea interfetei chatbot-ului si gestionarea bazei de date cu intrebari si raspunsuri.
 
 ![Interfata de administrare 2](poze_proiect/proiect-licenta-ui-admin2.png)
+
+## Instalare
+
+1. **Cloneaza repository-ul**
+   ```bash
+   git clone https://github.com/robertgrasu/proiect-licenta.git
+   cd proiect-licenta
+   ```
+
+2. **Instaleaza dependentele**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configureaza credentialele bazei de date in fisierul principal**
+
+4. **Porneste aplicatia**
+   ```bash
+   python proiect_licenta.py
+   ```
