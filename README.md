@@ -26,10 +26,10 @@ Chatbot-ul poate:
 ## Fluxul de functionare al aplicatiei
 
 Aplicatia functioneaza in patru etape principale:
-1. **Initializarea sistemului** — serverul Flask porneste si se conecteaza la baza de date MySQL pentru a incarca datele necesare
-2. **Preprocesarea datelor** — textele din baza de date sunt curatate si standardizate (eliminarea diacriticelor, lematizare, tokenizare)
-3. **Antrenarea modelului** — reteaua neuronala LSTM este antrenata pentru a recunoaste intentiile utilizatorilor
-4. **Procesarea interactiunii** — sistemul gestioneaza comunicarea cu utilizatorul, procesand intrebarile si generand raspunsuri adecvate sau conectand utilizatorul cu un operator cand este necesar
+1. **Initializarea sistemului** - serverul Flask porneste si se conecteaza la baza de date MySQL pentru a incarca datele necesare
+2. **Preprocesarea datelor** - textele din baza de date sunt curatate si standardizate (eliminarea diacriticelor, lematizare, tokenizare)
+3. **Antrenarea modelului** - reteaua neuronala LSTM este antrenata pentru a recunoaste intentiile utilizatorilor
+4. **Procesarea interactiunii** - sistemul gestioneaza comunicarea cu utilizatorul, procesand intrebarile si generand raspunsuri adecvate sau conectand utilizatorul cu un operator cand este necesar
 
 ![Diagrama sistemului](poze_proiect/diagrama-uml.png)
 
@@ -173,3 +173,9 @@ Panoul de administrare permite personalizarea interfetei chatbot-ului si gestion
    ```bash
    python proiect_licenta.py
    ```
+
+### Sau cu Docker
+
+```bash
+docker-compose up
+```
