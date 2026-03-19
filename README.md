@@ -6,16 +6,13 @@
 Acest proiect reprezinta lucrarea mea de licenta, un sistem de chatbot web dezvoltat pentru Universitatea "Vasile Alecsandri" din Bacau. Aplicatia are scopul de a oferi studentilor, cadrelor didactice si vizitatorilor acces rapid la informatii academice si administrative prin intermediul unei interfete conversationale intuitive.
 
 Chatbot-ul poate:
-- Raspunde automat la intrebari frecvente despre admitere, examene, burse, etc.
-- Intelege intrebari formulate in limbaj natural
-- Recunoaste intentia utilizatorului chiar si in prezenta greselilor de scriere
+- Raspunde automat la intrebari frecvente despre admitere, examene, burse
+- Intelege limbaj natural si recunoaste intentia chiar si cu greseli de scriere
 - Conecta utilizatorii cu operatori umani pentru situatii complexe
 
 ## Interfata utilizator
 
-Interfata cu utilizatorul a proiectului include:
-- Fereastra de chat cu bule de mesaje distincte pentru utilizator si chatbot
-- Optiuni predefinite organizate pe categorii (Admitere, Taxe, Regulamente, etc.)
+- Fereastra de chat cu optiuni predefinite pe categorii (Admitere, Taxe, Regulamente)
 - Camp pentru introducerea intrebarilor in limbaj natural
 - Posibilitatea de a solicita asistenta umana
 
