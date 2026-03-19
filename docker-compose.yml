@@ -1,0 +1,18 @@
+version: '3'
+services:
+  chatbot:
+    build: .
+    container_name: chatbot-app
+    restart: always
+    ports:
+      - "127.0.0.1:5001:5001"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - chatbot-network
+networks:
+  chatbot-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 
