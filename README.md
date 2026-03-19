@@ -3,7 +3,7 @@
 
 ## Descrierea proiectului
 
-Acest proiect reprezinta lucrarea mea de licenta, un sistem de chatbot web dezvoltat pentru Universitatea "Vasile Alecsandri" din Bacau. Aplicatia are scopul de a oferi studentilor, cadrelor didactice si vizitatorilor acces rapid la informatii academice si administrative prin intermediul unei interfete conversationale intuitive.
+Acest proiect reprezinta lucrarea mea de licenta din 2024, un sistem de chatbot web dezvoltat pentru Universitatea "Vasile Alecsandri" din Bacau. Aplicatia are scopul de a oferi studentilor, cadrelor didactice si vizitatorilor acces rapid la informatii academice si administrative prin intermediul unei interfete conversationale intuitive.
 
 Chatbot-ul poate:
 - Raspunde automat la intrebari frecvente despre admitere, examene, burse
